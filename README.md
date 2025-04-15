@@ -2,7 +2,43 @@
 
 https://docs.google.com/document/d/1SFDPkiXD7TWIpF1bKiAWFetz5XkQBbZphsRsUa6oO_M
 
-# Nuget
+## TimeLogger.cs
+```
+using System;
+using System.Configuration;
+using System.Diagnostics;
+
+public class TimeLogger : IDisposable
+{
+    private readonly Stopwatch _stopwatch;
+    private readonly string _operation;
+    private readonly bool _isEnabled;
+
+    public TimeLogger(string operation)
+    {
+        _operation = operation;
+        _stopwatch = Stopwatch.StartNew();
+        _isEnabled = bool.TryParse(ConfigurationManager.AppSettings["EnableTimeLogger"], out var enabled) && enabled;
+
+        if (_isEnabled)
+        {
+            Console.WriteLine($"[TimeLogger] Started: {_operation}");
+        }
+    }
+
+    public void Dispose()
+    {
+        _stopwatch.Stop();
+
+        if (_isEnabled)
+        {
+            Console.WriteLine($"[TimeLogger] Finished: {_operation} in {_stopwatch.Elapsed.TotalMilliseconds:F2} ms");
+        }
+    }
+}
+```
+
+## Nuget
 ```
 Install-Package Dapper
 Install-Package Polly
@@ -11,7 +47,7 @@ Install-Package CsvHelper
 Install-Package Newtonsoft.Json
 ```
 
-# log4net.config
+## log4net.config
 ```
 <log4net>
   <root>
@@ -33,7 +69,7 @@ Install-Package Newtonsoft.Json
 </log4net>
 ```
 
-# SQL Code
+## T-SQL Code
 ```
 CREATE TABLE Users (
     Id UNIQUEIDENTIFIER PRIMARY KEY,
@@ -65,7 +101,7 @@ BEGIN
 END
 ```
 
-# Program.cs
+## Program.cs
 ```
 using log4net;
 using log4net.Config;
@@ -84,7 +120,7 @@ static async Task Main(string[] args)
 }
 ```
 
-# UserReaderWorker.cs (v1)
+## UserReaderWorker.cs (v1)
 ```
 using System;
 using System.Collections.Generic;
@@ -265,7 +301,7 @@ public class UserReaderWorker : IDisposable
 }
 ```
 
-# UserReaderWorker.cs (v2)
+## UserReaderWorker.cs (v2)
 ```
 using System;
 using System.Collections.Generic;
