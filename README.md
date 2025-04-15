@@ -63,7 +63,26 @@ BEGIN
 END
 ```
 
-# C# Code (v2)
+# Program.cs
+```
+using log4net;
+using log4net.Config;
+using System.IO;
+
+static async Task Main(string[] args)
+{
+    var logRepository = LogManager.GetRepository(System.Reflection.Assembly.GetEntryAssembly());
+    XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+
+    var connectionString = "Server=(local);Database=UserDb;Integrated Security=true;";
+    using var worker = new UserReaderWorker(connectionString);
+
+    Console.WriteLine("UserReaderWorker running. Press Enter to exit.");
+    await Task.Run(() => Console.ReadLine());
+}
+```
+
+# UserReaderWorker.cs (v1)
 ```
 using System;
 using System.Collections.Generic;
@@ -244,7 +263,7 @@ public class UserReaderWorker : IDisposable
 }
 ```
 
-# C# Code (v1)
+# UserReaderWorker.cs (v2)
 ```
 using System;
 using System.Collections.Generic;
